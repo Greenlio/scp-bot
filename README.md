@@ -1,3 +1,3 @@
-# Public-SCP-Bot
+# Update
 
-The bot is currently closed source due to a stable version not being released.
+Bot is now open source.
