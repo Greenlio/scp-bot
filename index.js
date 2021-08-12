@@ -4,48 +4,17 @@ const Enmap = require('enmap');
 const https = require('https');
 // discord
 const Discord = require('discord.js');
-const client = new Discord.client()
-// enmap
-client.settings = new Enmap({
-  name: "settings",
-  fetchAll: false,
-  autoFetch: true,
-  cloneLevel: 'deep',
-  autoEnsure: {
-    Prefix: ".",
-  }
-});
+const client = new Discord.Client();
+const prefix = ".";
 // code. do not change unless you know what you're doing.
 client.on("message", async (message) => {
 // preventing death
   if(!message.guild || message.author.bot) return;
-// enmap
-  const guildConf = client.settings.get(message.guild.id);
 /// basic command things
-  if(message.content.indexOf(guildConf.prefix) !== 0) return;
+  if(message.content.indexOf(prefix) !== 0) return;
   const args = message.content.split(/\s+/g);
-  const command = args.shift().slice(guildConf.prefix.length).toLowerCase();
+  const command = args.shift().slice(prefix.length).toLowerCase();
 // commands
-  if(command === "setings") {
-    const adminRole = message.guild.roles.cache.find(role => role.name === 'Administrator');
-    if(!adminRole) return message.reply('You do not have any administrator role! To create one, make a role named \'Administrator\'!');
-    if(!message.member.roles.cache.has(adminRole.id)) {
-      return message.reply("You do not have a role named \'Administrator\'!");
-    }
-    const [prop, ...value] = args;
-    if(!client.settings.has(message.guild.id, prop)) {
-      return message.reply("This is not a setting.\n Example: **.setconf Prefix** (prefix)");
-    }   
-    client.settings.set(message.guild.id, value.join(" "), prop);
-    message.channel.send(`Guild configuration item ${prop} has been changed to:\n\`${value.join(" ")}\``);
-   }
-    if(command === "showconf") {
-        let configProps = Object.keys(guildConf).map(prop => {
-          return `**${prop}**: ${guildConf[prop]}`;
-        });
-        message.channel.send(`Server Configuration:
-${configProps.join("\n")}`);
-    }
     if(command === 'accept') {
         if (!message.member.roles.cache.find(r => r.name == "Recruitment")) return;
         let ign = args[0];
@@ -93,13 +62,11 @@ ${configProps.join("\n")}`);
         function parsedpt(department) {
             if (department == 'MF') return 'Military Force (MF)'
             if (department == 'PD') return 'Protection Department (PD)'
-            if (department == 'Helper') return 'Helper'
             if (department == 'MTF') return 'Mobile Task Force (MTF)'
             if (department == 'SD') return 'Security Department (SD)'
             if (department == 'ScD') return 'Scientific Department (ScD)'
             if (department == 'Sct') return 'Scientist (Sct)'
             if (department == 'SP') return 'Security Personnel (SP)'
-            if else return department
         }
         let workrank = parsedpt(rank)
         const usethis = new Discord.MessageEmbed()
@@ -159,13 +126,11 @@ ${configProps.join("\n")}`);
         function parsedpt(department) {
             if (department == 'MF') return 'Military Force (MF)'
             if (department == 'PD') return 'Protection Department (PD)'
-            if (department == 'Helper') return 'Helper'
             if (department == 'MTF') return 'Mobile Task Force (MTF)'
             if (department == 'SD') return 'Security Department (SD)'
             if (department == 'ScD') return 'Scientific Department (ScD)'
             if (department == 'Sct') return 'Scientist (Sct)'
             if (department == 'SP') return 'Security Personnel (SP)'
-            if else return department
         }
         let workrank = parsedpt(rank)
         const usethis = new Discord.MessageEmbed()
@@ -199,7 +164,6 @@ ${configProps.join("\n")}`);
 
 //-------------------------=-=Eval Command=-=-------------------------
 
-const prefix = '.';
 const clean = text => {
     if (typeof (text) === "string")
         return text.replace(/`/g, "`" + String.fromCharCode(8203)).replace(/@/g, "@" + String.fromCharCode(8203));
@@ -230,4 +194,4 @@ client.on("message", message => {
     }
 });
 
-client.login('put your token here or sus')
+client.login('no')
