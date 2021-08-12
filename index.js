@@ -69,6 +69,8 @@ client.on("message", async (message) => {
             if (department == 'SP') return 'Security Personnel (SP)'
         }
         let workrank = parsedpt(rank)
+        if (workrank == undefined) workrank = rank
+	message.delete()
         const usethis = new Discord.MessageEmbed()
         .setColor("#00ff15")
         .setTitle('Applications')
@@ -133,6 +135,8 @@ client.on("message", async (message) => {
             if (department == 'SP') return 'Security Personnel (SP)'
         }
         let workrank = parsedpt(rank)
+	if (workrank == undefined) workrank = rank
+	message.delete()
         const usethis = new Discord.MessageEmbed()
         .setColor("#FF6347")
         .setTitle('Applications')
