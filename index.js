@@ -1,60 +1,41 @@
-const {
-    Client,
-    RichEmbed
-} = require('discord.js');
-const client = new Client();
+// dependencies
 const ms = require("ms");
-const Discord = require('discord.js');
 const Enmap = require('enmap');
+const https = require('https');
+// discord
+const Discord = require('discord.js');
+const client = new Discord.client()
+// enmap
 client.settings = new Enmap({
   name: "settings",
   fetchAll: false,
   autoFetch: true,
   cloneLevel: 'deep',
   autoEnsure: {
-    ServerPreset: "null",
+    Prefix: ".",
   }
 });
-var https = require('https');
-
-https.get('https://docs.greenlio.link', function(res) {
-  let code = res.statusCode
-  console.log(code)
-
-})
-var list = [
-    'on CS45',
-    'on Dangerzone',
-    'on Breached'
-];
-const smhprefix = '.'
+// code. do not change unless you know what you're doing.
 client.on("message", async (message) => {
+// preventing death
   if(!message.guild || message.author.bot) return;
+// enmap
   const guildConf = client.settings.get(message.guild.id);
-  if(message.content.indexOf(smhprefix) !== 0) return;
+/// basic command things
+  if(message.content.indexOf(guildConf.prefix) !== 0) return;
   const args = message.content.split(/\s+/g);
-  const command = args.shift().slice(smhprefix.length).toLowerCase();
-  
-  if(command === "setconf") {
+  const command = args.shift().slice(guildConf.prefix.length).toLowerCase();
+// commands
+  if(command === "setings") {
     const adminRole = message.guild.roles.cache.find(role => role.name === 'Administrator');
-    if(!adminRole) return message.reply('You do not have any administrator role! Follow this guide to fix it.\nsoon:tm:');
+    if(!adminRole) return message.reply('You do not have any administrator role! To create one, make a role named \'Administrator\'!');
     if(!message.member.roles.cache.has(adminRole.id)) {
-      return message.reply("You are not an administrator.");
+      return message.reply("You do not have a role named \'Administrator\'!");
     }
     const [prop, ...value] = args;
     if(!client.settings.has(message.guild.id, prop)) {
-      return message.reply("This is not a setting.\n Example: **.setconf ServerPreset** CS45 / Breached / Dangerzone / IQPrison");
-    } 
-    if(value.join(" ") !== 'Breached') {
-        if(value.join(" ") !== 'Dangerzone') {
-            if(value.join(" ") !== 'CS45') {
-		if(value.join(" ") !== 'IQPrison') {
-                	message.reply('Invalid Server.\n Example: .setconf ServerPreset **CS45 / Breached / Dangerzone / IQPrison**')
-                	return;
-		}
-            }
-        }
-    }
+      return message.reply("This is not a setting.\n Example: **.setconf Prefix** (prefix)");
+    }   
     client.settings.set(message.guild.id, value.join(" "), prop);
     message.channel.send(`Guild configuration item ${prop} has been changed to:\n\`${value.join(" ")}\``);
    }
@@ -104,37 +85,7 @@ ${configProps.join("\n")}`);
             .setDescription(`Usage: .accept (IGN) (Discord) (Rank) (Further Information)`)
             .setFooter("Invalid Rank!")
         if (!rank) return message.channel.send(Embed1)
-        const guildConf = client.settings.get(message.guild.id);
-        if (guildConf.ServerPreset == 'Breached') {
-            if(rank !== 'MTF') {
-                if(rank !== 'SD') {
-                    if(rank !== 'ScD') {
-                        message.reply('You provided and invalid rank!\nFor this preset (Breached), the valid ranks are: ``ScD, SD, MTF``')
-                        return;
-                    }
-                }
-            }
-        }
-        if (guildConf.ServerPreset == 'IQPrison') {
-            if(rank !== 'MF') {
-                if(rank !== 'PD') {
-                    if(rank !== 'Helper') {
-                        message.reply('You provided and invalid rank!\nFor this preset (IQPrison), the valid ranks are: ``MF, PD, Helper``')
-                        return;
-                    }
-                }
-            }
-        }
-        if (guildConf.ServerPreset == 'CS45') {
-            if(rank !== 'SP') {
-                if(rank !== 'Sct') {
-                    if(rank !== 'MTF') {
-                        message.reply('You provided and invalid rank!\nFor this preset (CS45), the valid ranks are: ``Sct, SP, MTF``')
-                        return;
-                    }
-                }
-            }
-        }
+
         let reason = args.splice(3).join(' ');
         if (!reason) {
             reason = "No information provided, congratulations!"
@@ -158,7 +109,7 @@ ${configProps.join("\n")}`);
         .addField('**Discord**', user, true)
         .addField('**Rank**', workrank, true)
         .addField('**Additional Information**', reason, true)
-        .addField(`**IMPORTANT**`, `Please make sure to follow the rules given by department head staff.`)
+        .addField(`**IMPORTANT**`, `Please make sure to follow the rules given by department leadership.`)
         message.channel.send(usethis)
     }
     if(command === 'deny') {
