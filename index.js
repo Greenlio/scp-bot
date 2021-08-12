@@ -99,6 +99,7 @@ ${configProps.join("\n")}`);
             if (department == 'ScD') return 'Scientific Department (ScD)'
             if (department == 'Sct') return 'Scientist (Sct)'
             if (department == 'SP') return 'Security Personnel (SP)'
+            if else return department
         }
         let workrank = parsedpt(rank)
         const usethis = new Discord.MessageEmbed()
@@ -151,50 +152,6 @@ ${configProps.join("\n")}`);
             .setDescription(`Usage: .deny (IGN) (Discord) (Rank) (Further Information)`)
             .setFooter("Invalid Rank!")
         if (!rank) return message.channel.send(Embed1)
-
-        const guildConf = client.settings.get(message.guild.id);
-        if (guildConf.ServerPreset == 'Breached') {
-            if(rank !== 'MTF') {
-                if(rank !== 'SD') {
-                    if(rank !== 'ScD') {
-                        message.reply('You provided and invalid rank!\nFor this preset (Breached), the valid ranks are: ``ScD, SD, MTF``')
-                        return;
-                    }
-                }
-            }
-        }
-        if (guildConf.ServerPreset == 'Dangerzone') {
-            if(rank !== 'MTF') {
-                if(rank !== 'SD') {
-                    if(rank !== 'ScD') {
-                        message.reply('You provided and invalid rank!\nFor this preset (Dangerzone), the valid ranks are: ``ScD, SD, MTF``')
-                        return;
-                    }
-                }
-            }
-        }
-        if (guildConf.ServerPreset == 'CS45') {
-            if(rank !== 'SP') {
-                if(rank !== 'Sct') {
-                    if(rank !== 'MTF') {
-                        message.reply('You provided and invalid rank!\nFor this preset (CS45), the valid ranks are: ``Sct, SP, MTF``')
-                        return;
-                    }
-                }
-            }
-        }
-        if (guildConf.ServerPreset == 'IQPrison') {
-            if(rank !== 'MF') {
-                if(rank !== 'PD') {
-                    if(rank !== 'Helper') {
-                        message.reply('You provided and invalid rank!\nFor this preset (Prison), the valid ranks are: ``MF PD, Helper``')
-                        return;
-                    }
-                }
-            }
-        }
-
-
         let reason = args.splice(3).join(' ');
         if (!reason) {
             reason = "No information provided, apply again sometime!"
@@ -208,6 +165,7 @@ ${configProps.join("\n")}`);
             if (department == 'ScD') return 'Scientific Department (ScD)'
             if (department == 'Sct') return 'Scientist (Sct)'
             if (department == 'SP') return 'Security Personnel (SP)'
+            if else return department
         }
         let workrank = parsedpt(rank)
         const usethis = new Discord.MessageEmbed()
@@ -222,103 +180,22 @@ ${configProps.join("\n")}`);
         message.channel.send(usethis)
     }
     if(command === "invite") {
-        message.author.send('Use this link to invite the bot.\nhttps://discord.com/api/oauth2/authorize?client_id=728281666250080266&permissions=117824&scope=bot')
-        message.channel.send('Sent! Check DMs.')
+        message.channel.send('no.')
     }
+    if(command === "amogus") {
+        message.channel.send('sus.')
+    }
+
     if(command === "scp") {
-        message.author.send(`Use this link to check out SCP-${args[0]}!\nhttp://www.scpwiki.com/scp-${args[0]}`)
-        message.channel.send('Sent! Check DMs.')
+//credit to nick512 for making this
+        if (!isNaN(args[1]) && args[1] < 9999) {
+            msg.channel.send("http://www.scpwiki.com/scp-" + args[1])
+        } else {
+            msg.channel.send("give me an scp number")
+        }
+//end credit to nick512 for making this
     }
 });
-
-
-client.on('ready', () => {
-    console.log(`SCP Public Bot online!`)
-    setInterval(() => {
-        const index = list[Math.floor(Math.random() * list.length)];
-        if (index == `on CS45`) {
-            client.user.setActivity(index, {
-                type: "PLAYING",
-            })
-        } else if (index == `on Dangerzone`) {
-            client.user.setActivity(index, {
-                type: "PLAYING",
-            })
-        } else if (index == `on Breached`) {
-            client.user.setActivity(index, {
-                type: "PLAYING",
-            })
-        }
-    }, 60000);
-});
-
-
-//-------------------------=-=Command Handler=-=-------------------------
-var fs = require('fs');
-client.commands = new Discord.Collection();
-
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
-
-for (const file of commandFiles) {
-    const command = require(`./commands/${file}`);
-    client.commands.set(command.name, command);
-}
-
-const cooldowns = new Discord.Collection();
-
-client.on('message', message => {
-    if (!message.content.startsWith(prefix) || message.author.bot) return;
-
-    const args = message.content.slice(prefix.length).trim().split(/ +/);
-    const commandName = args.shift().toLowerCase();
-
-    const command = client.commands.get(commandName) ||
-        client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
-
-    if (!command) return;
-
-    if (command.guildOnly && message.channel.type === 'dm') {
-        return message.reply('I can\'t execute that command inside DMs!');
-    }
-
-    if (command.args && !args.length) {
-        let reply = `You didn't provide any arguments, ${message.author}!`;
-
-        if (command.usage) {
-            reply += `\nThe proper usage would be: \`${prefix}${command.name} ${command.usage}\``;
-        }
-
-        return message.channel.send(reply);
-    }
-
-    if (!cooldowns.has(command.name)) {
-        cooldowns.set(command.name, new Discord.Collection());
-    }
-
-    const now = Date.now();
-    const timestamps = cooldowns.get(command.name);
-    const cooldownAmount = (command.cooldown || 3) * 1000;
-
-    if (timestamps.has(message.author.id)) {
-        const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
-
-        if (now < expirationTime) {
-            const timeLeft = (expirationTime - now) / 1000;
-            return message.reply(`please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`);
-        }
-    }
-
-    timestamps.set(message.author.id, now);
-    setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
-
-    try {
-        command.execute(message, args);
-    } catch (error) {
-        console.error(error);
-        message.reply('there was an error trying to execute that command!');
-    }
-});
-
 
 //-------------------------=-=Eval Command=-=-------------------------
 
@@ -335,7 +212,6 @@ client.on("message", message => {
     var prefix = '.';
     if (message.content.startsWith(prefix + "eval")) {
         if (message.author.id !== '239827986709217281') return;
-	if (args.join(" ") == "client.token") return message.channel.send('[SecuroServ] Security threat spotted and cancelled.')
         try {
             const code = args.join(" ");
             if (!code) return message.channel.send("Missing Arg-1")
@@ -344,7 +220,7 @@ client.on("message", message => {
 
             if (typeof evaled !== "string")
                 evaled = require("util").inspect(evaled);
-
+            if(clean(evaled).contains(client.token)) return message.channel.send('[SecuroServ] Security threat spotted and cancelled.');
             message.channel.send(clean(evaled), {
                 code: "xl"
             });
@@ -354,4 +230,4 @@ client.on("message", message => {
     }
 });
 
-const asdfiadfsdufghsdfughssdfgfdsfgsdfg = 'my token, not yours!'
+client.login('put your token here or sus')
