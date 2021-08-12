@@ -1,3 +1,3 @@
-# Update
+## 8/11/2021
 
-Bot is now open source.
+Rewrite of the bot complete, make sure to read LICENSE and TERMS files.
